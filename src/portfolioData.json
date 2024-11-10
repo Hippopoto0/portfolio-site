@@ -1,0 +1,22 @@
+[
+    {
+        "title": "Cards against Sapiens",
+        "description": "A online version of Cards against Humanity.",
+        "imageLink": "/assets/cards-against-sapiens.webp",
+        "url": "https://cards-against-sapiens.onrender.com",
+        "lessons": "Here, I sharpened up my frontend skills using ReactJS with Framer Motion. On the backend, FastAPI is used, utilising a custom Docker container. I also developed skills in DevOps, with each build being automatically deployed."
+    },
+    {
+        "title": "Triothello",
+        "description": "An AI capable version of Othello",
+        "imageLink": "/assets/triothello.webp",
+        "url": "https://triothello.web.app",
+        "lessons": "Written using Javascript, this project required development of my skills in networking to make the game multiplayer, and in algorithmic thinking. An AI was developed using the Minimax algorithm for singleplayer."
+    },
+    {
+        "title": "Blender Launchpad",
+        "description": "An instance manager for Blender.",
+        "imageLink": "/assets/blender-launchpad.webp",
+        "lessons": "I used a framework called Tauri to develop a version manager for the popular software Blender. I made use of Rust in the backend, but did most of the backend logic in Python, learning how to communicate between the two using piping."
+    }
+]
