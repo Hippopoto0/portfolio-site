@@ -1,6 +1,7 @@
 [
     {
         "title": "Cards against Sapiens",
+        "id": "cards-against-sapiens",
         "description": "A online version of Cards against Humanity.",
         "imageLink": "/assets/cards-against-sapiens.webp",
         "url": "https://cards-against-sapiens.onrender.com",
@@ -8,6 +9,7 @@
     },
     {
         "title": "Triothello",
+        "id": "triothello",
         "description": "An AI capable version of Othello",
         "imageLink": "/assets/triothello.webp",
         "url": "https://triothello.web.app",
@@ -15,6 +17,7 @@
     },
     {
         "title": "Blender Launchpad",
+        "id": "blender-launchpad",
         "description": "An instance manager for Blender.",
         "imageLink": "/assets/blender-launchpad.webp",
         "lessons": "I used a framework called Tauri to develop a version manager for the popular software Blender. I made use of Rust in the backend, but did most of the backend logic in Python, learning how to communicate between the two using piping."

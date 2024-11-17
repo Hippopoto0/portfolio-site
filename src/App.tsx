@@ -1,138 +1,116 @@
-import { useLayoutEffect, useState } from 'react'
-import anime from "animejs/lib/anime.es"
-import "./index.css"
-import PortfolioThumbnail from './PortfolioThumbnail'
-import { Description, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { Tilt } from 'react-tilt'
 import PortfolioData from "./portfolioData.json"
-import { AnimatePresence, motion } from 'framer-motion'
-import { div } from 'framer-motion/client'
+import ProjectThumbnail from "./ProjectThumbnail"
+import anime from "animejs"
 
-function App() {
+const defaultOptions = {
+	reverse:        false,  // reverse the tilt direction
+	max:            5,     // max tilt rotation (degrees)
+	perspective:    1000,   // Transform perspective, the lower the more extreme the tilt gets.
+	scale:          1.01,    // 2 = 200%, 1.5 = 150%, etc..
+	speed:          1000,   // Speed of the enter/exit transition
+	transition:     true,   // Set a transition on enter/exit.
+	axis:           null,   // What axis should be disabled. Can be X or Y.
+	reset:          true,    // If the tilt effect has to be reset on exit.
+	easing:         "cubic-bezier(.03,.98,.52,.99)",    // Easing on enter/exit.
+}
+
+export default function App() {
   useLayoutEffect(() => {
-      anime.timeline({
-        targets: ".message-box",
-      }).add({
-        scale: [0, 1],
-        translateX: ["-400%", "-100%"],
-        translateY: ["100%", "0%"],
-        easing: 'spring(1, 80, 10, 0)',
-      }, 0).add({
-        targets: ".message-text",
-        opacity: [0, 1]
-      }, 800).add({
-        width: ["4rem", "16rem"],
-        translateX: "0%",
-        easing: 'spring(1, 80, 10, 0)',
-      }, 800).add({
-        targets: '.grid-item',
-        scale: [
-          // {value: .1, easing: 'easeOutSine', duration: 500},
-          {value: 0, duration: 0},
-          {value: 1, easing: 'linear', duration: 800}
-        ],
-        delay: anime.stagger(150, {grid: [60, 30], from: 'center'})
-      }, 2000).add({
-        targets: ".background-blur",
-        opacity: [1, 0],
-        duration: 10000
-      }, 3000).add({
-        targets: ".projects-title",
-        opacity: [0, 1],
-        translateY: [-10, 0],
-        easing: "easeOutCubic"
-      }, 4000).add({
-        targets: ".portfolio-thumb",
-        opacity: [0, 1],
-        translateY: [-10, 0],
-        easing: "easeOutCubic",
-        delay: anime.stagger(150)
-      }, 5000).add({
-        targets: ".grid-item .message-text",
-        opacity: 0,
-        duration: 0
-      })
+    window.addEventListener("mousemove", handleMouseMove)
+    document.getElementById("content")!.addEventListener("scroll", () => {
+      setScrollY(document.getElementById("content")!.scrollTop)
+    }
+    );
 
+    anime({
+      targets: ".info",
+      translateY: [10, 0],
+      opacity: [0, 1],
+      delay: anime.stagger(100, {start: 400})
+    })
   }, [])
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [index, setIndex] = useState(0)
+  let blurRef = useRef(null);
 
-  return <main className='absolute flex w-full h-screen bg-zinc-800 items-center justify-center overflow-hidden'>
+  let [scrollY, setScrollY] = useState(0)
 
-        <div className='background-blur absolute bg-gradient-to-br from-blue-500/30 to-green-600/30 w-80 h-80 rounded-full'></div>
-        <div className='absolute w-full h-full backdrop-blur-3xl'></div>
-        <div className='absolute'>
-          <div className='relative message-box bg-blue-500 w-16 h-8 rounded-2xl shadow-lg -translate-x-[-400%] flex items-center'>
-            <h1 className='message-text text-md font-bold text-white opacity-0 whitespace-nowrap mx-4'>
-              Hi there, I'm Dan 😁
-            </h1>
-          </div>
+  function handleMouseMove(e: MouseEvent) {
+    let [x, y] = [e.clientX, e.clientY]
+
+    if (!blurRef.current) return;
+    
+    let el = blurRef.current as HTMLDivElement;
+    el.style.left = `${x - el.clientWidth / 2}px`;
+    el.style.top = `${y - el.clientHeight / 2}px`;
+  }
+
+  return <main className="w-full h-screen bg-teal-900">
+    <div ref={blurRef} className="absolute w-[40rem] h-[40rem] rounded-full bg-gradient-to-br from-blue-600 to-green-600 opacity-20 hidden lg:flex"></div>
+    <div className="absolute overflow-hidden w-full h-screen backdrop-blur-3xl"></div>
+
+    <section id="content" className="absolute w-full h-screen flex flex-col lg:flex-row overflow-y-auto">
+      <section className="flex flex-col items-start w-full lg:w-1/2 px-12 pt-36 relative lg:sticky top-0">
+        <h1 className="w-full text-white font-bold tracking-wider text-5xl text-[clamp(2rem,5vw,2.3rem)]">
+          Hi there, I'm <span className="font-poppins text-yellow-400 font-bold">Dan</span>.
+        </h1>
+        <h2 className="text-white mt-4 text-xl">I'm a Software Engineer from the UK.</h2>
+
+        <div className="hidden lg:flex flex-col font-poppins text-gray-300 p-8 mt-4">
+          <ul className="list-disc cursor-pointer">
+            <li><div onClick={() => {
+                    let el = document.getElementById("about")
+                    el?.scrollIntoView()
+                  }}>About</div></li>
+            <li><div onClick={() => {
+                    let el = document.getElementById("projects")
+                    el?.scrollIntoView()
+                  }}>
+              Projects
+            </div></li>
+          </ul>
+          <ul className="list-disc ml-4 cursor-pointer tracking-wide">
+            {PortfolioData.map((item, index) => 
+              <li key={index}><div onClick={() => {
+                if (!blurRef.current) return;
+
+                let blurEl = (blurRef.current as HTMLDivElement)
+                blurEl.style.display = "none"
+                let el = document.getElementById(item.id)
+                console.log(el)
+                el?.scrollIntoView()
+                blurEl.style.display = "flex";
+              }}>{item.title}</div></li>
+            )}
+          </ul>
         </div>
-        <div className='absolute flex flex-col'>
-          {Array(30).fill(0).map(() => 
-            <div className='flex flex-row'>
-              {Array(60).fill(0).map(() =>
-                <div className='grid-item scale-0 w-4 h-4 bg-zinc-800' style={{
-                  maskImage: 'linear-gradient(to right, transparent 100%)',
-                }}></div>
-              )}
-            </div>
-          )}
-        </div>
 
-        <section className='w-full h-screen flex flex-col p-8 overflow-auto z-10'>
-          <header className='w-full h-28 flex items-end'>
-            <h1 className='opacity-0 projects-title font-bold text-gray-200 text-3xl'>Some Projects</h1>
-          </header>
-          <div className='w-full flex-1 p-8 flex flex-row flex-wrap gap-8'>
-            <PortfolioThumbnail onClick={() => { setIsOpen(true); setIndex(0)}} index={0} />
-            <PortfolioThumbnail onClick={() => { setIsOpen(true); setIndex(1) }} index={1} />
-            <PortfolioThumbnail onClick={() => { setIsOpen(true); setIndex(2) }} index={2} />
+      </section>
+      <section className="flex flex-col w-full lg:1/2 gap-8 items-start justify-start pl-12 lg:pl-0 pr-12 pt-12 text-gray-300">
+        <Tilt 
+          options={defaultOptions} 
+          className={`info p-4 rounded-2xl border-teal-950/0 hover:border-teal-950/20 border-4
+                     bg-teal-800/10 hover:bg-teal-800/60`}>
+          <h1 className="font-bold font-poppins text-3xl text-yellow-400" id="about">About Me</h1>
+          <p className="mt-2"> I'm a developer who loves diving into new challenges and expanding my skills beyond the familiar. While I started out crafting seamless, visually appealing user interfaces, I've grown to appreciate working across the stack and embracing new technologies. </p>
+          <p className="mt-2"> I'm passionate about creating work that isn't just visually impressive but is also efficient and user-friendly. I approach each project with a focus on detail and commitment to quality. I'm always excited to take on what comes next. </p>
+        </Tilt>
+        <Tilt 
+          options={defaultOptions} 
+          className={`info p-4 rounded-2xl border-teal-950/0 hover:border-teal-950/20 border-4
+                     bg-teal-800/10 hover:bg-teal-800/60`}>
+          <h1 className="font-bold font-poppins text-3xl text-yellow-400" id="projects">Projects</h1>
+          <p className="mt-2"> Over the years, I've worked on a variety of projects that have sharpened my ability to learn fast and adapt to new environments. I'm the kind of person who enjoys figuring out how things work and putting that knowledge into practice. Here are some examples!</p>
+        </Tilt>
+        {PortfolioData.map((portfolioItem, index) => 
+          <div className="pl-4 info">
+            <ProjectThumbnail id={portfolioItem.id} scrollY={scrollY} title={portfolioItem.title} imageLink={portfolioItem.imageLink} url={portfolioItem.url} description={portfolioItem.description} lessons={portfolioItem.lessons} key={index} />
           </div>
-        </section>
+        )}
 
-        <AnimatePresence>
-          {isOpen &&
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1}}
-                exit={{ opacity: 0 }}
-                className='absolute z-20 w-full h-full bg-white/20' onClick={() => setIsOpen(false)}></motion.div>
-              <div className='absolute z-20 w-full h-full flex items-center justify-center pointer-events-none'>
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0}}
-                  animate={{ scale: 1, opacity: 1}}
-                  exit={{ scale: 0.8, opacity: 0}}
-                  transition={{ ease: "easeOut"}}
-                  className='pointer-events-auto relative w-[40rem] max-w-[80%] h-[30rem] rounded-2xl bg-zinc-800 shadow-lg'>
-                    <button 
-                      onClick={() => setIsOpen(false)}
-                      className='cursor-pointer absolute top-4 right-4 w-10 h-10 scale-[100%] flex items-center justify-center' style={{ textShadow: "0px 0px 2px white"}}>
-                      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 30 30">
-                        <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z"></path>
-                      </svg>
-                    </button>
-
-                  <div className=' h-32 rounded-2xl' style={{ backgroundImage: `url('${PortfolioData[index].imageLink}')`, backgroundSize: "cover", backgroundPosition: "center" }}></div>
-                  <div className='w-full h-16 bg-gradient-to-b from-transparent to-zinc-800 -translate-y-16'></div>
-                  <div className=' -translate-y-12 p-8'> 
-                    <h1 className='font-bold text-xl text-zinc-200'>{PortfolioData[index].title}</h1>
-                    <p className=' text-zinc-200 mt-2 font-bold'>{PortfolioData[index].description}</p>
-                    <p className='text-zinc-200 mt-2'>{PortfolioData[index].lessons}</p>
-                    {PortfolioData[index].url !== undefined &&
-                      <button
-                        className=' bg-zinc-200 font-bold text-zinc-800 px-2 py-3 mt-8 rounded-lg'
-                      ><a href={PortfolioData[index].url} target='_blank'>Open in New Tab</a></button>
-                    }
-                  </div>
-                </motion.div>
-              </div>
-            </>
-          }
-        </AnimatePresence>
+      </section>
+    </section>
 
   </main>
 }
-
-export default App;
