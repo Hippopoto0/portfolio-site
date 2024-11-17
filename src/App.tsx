@@ -21,6 +21,18 @@ export default function App() {
     window.addEventListener("mousemove", handleMouseMove)
     document.getElementById("content")!.addEventListener("scroll", () => {
       setScrollY(document.getElementById("content")!.scrollTop)
+
+      let highlighted = []
+      for (let index = 0; index < menuIds.length; index++) {
+        const id = menuIds[index];
+        
+        let el = document.getElementById(id)
+        let y = el!.getBoundingClientRect().top + scrollY - 80
+
+        if (scrollY > y) { highlighted.push(id) }
+      }
+
+      setHighlightedMenuItems(highlighted)
     }
     );
 
@@ -35,6 +47,11 @@ export default function App() {
   let blurRef = useRef(null);
 
   let [scrollY, setScrollY] = useState(0)
+  let [highlightedMenuItems, setHighlightedMenuItems] = useState<string[]>([])
+
+  let menuIds = ["about", "projects"]
+
+  PortfolioData.forEach((item) => { menuIds.push(item.id) })
 
   function handleMouseMove(e: MouseEvent) {
     let [x, y] = [e.clientX, e.clientY]
@@ -57,29 +74,34 @@ export default function App() {
         </h1>
         <h2 className="text-white mt-4 text-xl">I'm a Software Engineer from the UK.</h2>
 
-        <div className="hidden lg:flex flex-col font-poppins text-gray-300 p-8 mt-4">
+        <div className="hidden lg:flex flex-col font-poppins text-gray-300 text-lg p-8 mt-4">
           <ul className="list-disc cursor-pointer">
-            <li><div onClick={() => {
+            <li><div className={`font-poppins font-bold transition-all ${highlightedMenuItems.includes("about") ? "text-yellow-300" : "text-slate-400"}`} onClick={() => {
                     let el = document.getElementById("about")
-                    el?.scrollIntoView()
+                    
+                    let y = el!.getBoundingClientRect().top + scrollY + 20
+                    document.getElementById("content")!.scrollTo({top: y, behavior: 'smooth'})
                   }}>About</div></li>
-            <li><div onClick={() => {
+            <li><div className={`font-poppins font-bold transition-all ${highlightedMenuItems.includes("projects") ? "text-yellow-300" : "text-slate-400"}`} onClick={() => {
                     let el = document.getElementById("projects")
-                    el?.scrollIntoView()
+                    
+                    let y = el!.getBoundingClientRect().top + scrollY + 20
+                    document.getElementById("content")!.scrollTo({top: y, behavior: 'smooth'})
                   }}>
               Projects
             </div></li>
           </ul>
           <ul className="list-disc ml-4 cursor-pointer tracking-wide">
             {PortfolioData.map((item, index) => 
-              <li key={index}><div onClick={() => {
+              <li key={index}><div className={`font-poppins font-bold transition-all ${highlightedMenuItems.includes(item.id) ? "text-yellow-300" : "text-slate-400"}`} onClick={() => {
                 if (!blurRef.current) return;
 
                 let blurEl = (blurRef.current as HTMLDivElement)
                 blurEl.style.display = "none"
                 let el = document.getElementById(item.id)
-                console.log(el)
-                el?.scrollIntoView()
+                
+                let y = el!.getBoundingClientRect().top + scrollY + 20
+                document.getElementById("content")!.scrollTo({top: y, behavior: 'smooth'})
                 blurEl.style.display = "flex";
               }}>{item.title}</div></li>
             )}
@@ -87,7 +109,8 @@ export default function App() {
         </div>
 
       </section>
-      <section className="flex flex-col w-full lg:1/2 gap-8 items-start justify-start pl-12 lg:pl-0 pr-12 pt-12 text-gray-300">
+      <section className="flex flex-col w-full lg:1/2 gap-8 items-start justify-start pl-2 pr-2 md:pl-12 lg:pl-0 md:pr-12 pt-12 text-gray-300">
+        <div className="p-8"></div>
         <Tilt 
           options={defaultOptions} 
           className={`info p-4 rounded-2xl border-teal-950/0 hover:border-teal-950/20 border-4
@@ -108,6 +131,8 @@ export default function App() {
             <ProjectThumbnail id={portfolioItem.id} scrollY={scrollY} title={portfolioItem.title} imageLink={portfolioItem.imageLink} url={portfolioItem.url} description={portfolioItem.description} lessons={portfolioItem.lessons} key={index} />
           </div>
         )}
+
+        <div className="py-44 px-2"></div>
 
       </section>
     </section>
