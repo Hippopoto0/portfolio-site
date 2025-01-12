@@ -21,5 +21,12 @@
         "description": "An instance manager for Blender.",
         "imageLink": "/assets/blender-launchpad.webp",
         "lessons": "I used a framework called Tauri to develop a version manager for the popular software Blender. I made use of Rust in the backend, but did most of the backend logic in Python, learning how to communicate between the two using piping."
+    },
+    {
+        "title": "Cuneiform LLM",
+        "id": "cuneiform-llm",
+        "description": "LLM fine-tuned to translate ancient tablet text into English",
+        "imageLink": "/assets/cuneiform.webp",
+        "lessons": "Fine-tuned the T5 model to have the ability to translate Cuneiform into English. This project required knowledge of Pytorch, scraping of data from the web, and understanding of Large Language Models."
     }
 ]
