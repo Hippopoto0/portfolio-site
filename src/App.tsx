@@ -136,7 +136,6 @@ export default function App() {
                 </nav>
                  {/* Footer */}
                 <div className="mt-auto pb-8 hidden lg:block">
-                    <p className="text-xs text-slate-500">Built with React & Tailwind</p>
                 </div>
             </section>
             {/* === End Left Pane === */}
