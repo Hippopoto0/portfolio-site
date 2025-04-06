@@ -105,7 +105,7 @@ export default function App() {
         <section id="content" ref={contentRef} className="relative z-10 w-full h-screen flex flex-col lg:flex-row overflow-y-auto overflow-x-hidden">
 
             {/* === Left Pane (Sticky on Large Screens) === */}
-            <section className="flex flex-col items-start w-full lg:w-2/5 px-6 sm:px-12 pt-24 md:pt-36 relative lg:sticky lg:h-screen top-0">
+            <section className="flex flex-col items-start w-full lg:w-2/5 px-6 sm:px-12 pt-24 md:pt-30 relative lg:sticky lg:h-screen top-0">
 
                 {/* Introduction - Use "Inspect Element" here */}
                 <h1 className="w-full text-white font-bold tracking-wider text-[clamp(2.5rem,6vw,3rem)]">
@@ -142,7 +142,7 @@ export default function App() {
             {/* === End Left Pane === */}
 
             {/* === Right Pane (Scrollable Content) === */}
-            <section className="flex flex-col w-full lg:w-3/5 gap-8 items-start justify-start px-4 md:px-12 lg:px-0 lg:pr-12 pt-12 text-gray-300">
+            <section className="flex flex-col w-full lg:w-3/5 gap-8 items-start justify-start px-4 md:px-12 lg:px-0 lg:pr-12 text-gray-300">
                  <div className="pt-16 md:pt-24"></div>
                  {/* About Section */}
                 <div ref={sectionRefs.current.about} id="about" className="info w-full">
